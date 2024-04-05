@@ -15,7 +15,7 @@ export class CategoryService {
   }
 
   findAll() {
-    return `This action returns all category`;
+    return this.categoryRepository.findAll();
   }
 
   findOne(id: number) {
@@ -23,10 +23,13 @@ export class CategoryService {
   }
 
   update(
-    id: number,
+    id: string,
     updateCategoryDto: UpdateCategoryDto,
   ) {
-    return `This action updates a #${id} category`;
+    return this.categoryRepository.updateCategory(
+      id,
+      updateCategoryDto,
+    );
   }
 
   remove(id: number) {

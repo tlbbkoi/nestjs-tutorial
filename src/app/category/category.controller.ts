@@ -11,6 +11,7 @@ import {
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
+import { ApiResponse } from 'src/type/common.type';
 
 @Controller('category')
 export class CategoryController {
@@ -21,7 +22,7 @@ export class CategoryController {
   @Post()
   async create(
     @Body() createCategoryDto: CreateCategoryDto,
-  ) {
+  ): Promise<ApiResponse<any>> {
     await this.categoryService.create(
       createCategoryDto,
     );
@@ -33,8 +34,15 @@ export class CategoryController {
   }
 
   @Get()
-  findAll() {
-    return this.categoryService.findAll();
+  async findAll(): Promise<ApiResponse<any[]>> {
+    const categorys =
+      await this.categoryService.findAll();
+
+    return {
+      ...categorys,
+      statusCode: HttpStatus.OK,
+      message: 'Success',
+    };
   }
 
   @Get(':id')
@@ -43,14 +51,21 @@ export class CategoryController {
   }
 
   @Patch(':id')
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateCategoryDto: UpdateCategoryDto,
-  ) {
-    return this.categoryService.update(
-      +id,
-      updateCategoryDto,
-    );
+  ): Promise<ApiResponse<any>> {
+    const category =
+      await this.categoryService.update(
+        id,
+        updateCategoryDto,
+      );
+
+    return {
+      ...category,
+      statusCode: HttpStatus.OK,
+      message: 'Success',
+    };
   }
 
   @Delete(':id')
