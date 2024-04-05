@@ -2,17 +2,18 @@ import {
   ForbiddenException,
   Injectable,
 } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+
 import {
   CreateBookmarkDto,
   EditBookmarkDto,
 } from './dto';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class BookmarkService {
   constructor(private prisma: PrismaService) {}
 
-  getBookmarks(userId: number) {
+  getBookmarks(userId: string) {
     return this.prisma.bookmark.findMany({
       where: {
         userId,
@@ -21,8 +22,8 @@ export class BookmarkService {
   }
 
   getBookmarkById(
-    userId: number,
-    bookmarkId: number,
+    userId: string,
+    bookmarkId: string,
   ) {
     return this.prisma.bookmark.findFirst({
       where: {
@@ -33,7 +34,7 @@ export class BookmarkService {
   }
 
   async createBookmark(
-    userId: number,
+    userId: string,
     dto: CreateBookmarkDto,
   ) {
     const bookmark =
@@ -48,8 +49,8 @@ export class BookmarkService {
   }
 
   async editBookmarkById(
-    userId: number,
-    bookmarkId: number,
+    userId: string,
+    bookmarkId: string,
     dto: EditBookmarkDto,
   ) {
     // get the bookmark by id
@@ -77,8 +78,8 @@ export class BookmarkService {
   }
 
   async deleteBookmarkById(
-    userId: number,
-    bookmarkId: number,
+    userId: string,
+    bookmarkId: string,
   ) {
     const bookmark =
       await this.prisma.bookmark.findUnique({

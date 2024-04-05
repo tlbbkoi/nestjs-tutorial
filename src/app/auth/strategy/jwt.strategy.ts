@@ -5,7 +5,7 @@ import {
   ExtractJwt,
   Strategy,
 } from 'passport-jwt';
-import { PrismaService } from '../../prisma/prisma.service';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(
@@ -24,7 +24,7 @@ export class JwtStrategy extends PassportStrategy(
   }
 
   async validate(payload: {
-    sub: number;
+    sub: string;
     email: string;
   }) {
     const user =

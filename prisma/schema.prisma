@@ -2,7 +2,7 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client-js"  
 }
 
 datasource db {
@@ -11,7 +11,7 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
+  id        String      @id @default(uuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -23,11 +23,17 @@ model User {
 
   bookmarks Bookmark[]
 
+  commentForProducts CommentForProduct[]
+
+  carts Cart[]
+
+  orders Order[]
+
   @@map("users")
 }
 
 model Bookmark {
-  id        Int      @id @default(autoincrement())
+  id        String      @id @default(uuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -35,8 +41,142 @@ model Bookmark {
   description String?
   link        String
 
-  userId Int
+  userId String
   user   User @relation(fields: [userId], references: [id])
 
   @@map("bookmarks")
+}
+
+model Category {
+  id String @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name String @unique
+  description String?
+
+  products Product[]
+}
+
+model Product {
+  id String @id @default(uuid())
+  name String
+  description String
+  madeIn     String
+  basePrice Float
+  sale Float @default(0)
+  isActive Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  categoryId String
+  category Category @relation(fields: [categoryId], references: [id])
+
+  commentForProducts CommentForProduct[]
+
+  productVariant ProductVariant[]
+}
+
+model ProductVariant {
+  id          String       @id @default(uuid())
+  color       String
+  size        Float
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  productId   String
+  product     Product      @relation(fields: [productId], references: [id])
+
+  cartItems   CartItem[]
+  orderItems  OrderItem[]
+  inventory   Inventory[]
+  images      ProductImage[]
+}
+
+model ProductImage {
+  id            String         @id @default(uuid())
+  imageUrl      String
+  
+  productVariantId String
+  productVariant ProductVariant @relation(fields: [productVariantId], references: [id])
+}
+
+model CommentForProduct {
+  id String @id @default(uuid())
+
+  content String
+  rating Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String
+  user User @relation(fields: [userId], references: [id])
+
+  productId String
+  product Product @relation(fields: [productId], references: [id])
+}
+
+model Cart{
+  id String @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String
+  user User @relation(fields: [userId], references: [id])
+
+  cartItems CartItem[]
+}
+
+model CartItem{
+  id String @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  quantity Int
+
+  cartId String
+  cart Cart @relation(fields: [cartId], references: [id])
+
+  productDetailId String
+  productVariant     ProductVariant @relation(fields: [productDetailId], references: [id])
+}
+
+model Order {
+  id String @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  totalMount Float
+  shippingAddress String
+
+  userId String
+  user User @relation(fields: [userId], references: [id])
+
+  orderItems OrderItem[]
+}
+
+model OrderItem{
+  id String @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  quantity Int
+  unitPrice Float
+
+  productDetailId String
+  productVariant ProductVariant @relation(fields: [productDetailId], references: [id])
+
+  orderId String
+  order Order @relation(fields: [orderId], references: [id])
+}
+
+model Inventory {
+  id String @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  quantity Int
+
+  productDetailId String
+  productVariant ProductVariant @relation(fields: [productDetailId], references: [id])
 }
